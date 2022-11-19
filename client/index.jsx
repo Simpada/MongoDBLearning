@@ -41,19 +41,26 @@ function useLoading(loadingFunction) {
     };
 }
 
-async function fetchJSON(url) {
-    const res = await fetch(url);
+async function fetchJSON(url, options = {}) {
+    const res = await fetch(url, {
+        method: options.method || "get",
+        headers: options.json ? { "content-type": "application/json" } : {},
+        body: options.json && JSON.stringify(options.json),
+    });
     if (!res.ok) {
-        throw new Error(`Failed to load ${res.status}: ${res.statusText}`);
+        throw new Error(`Failed ${res.status}: ${(await res).statusText}`);
     }
-
-    return await res.json();
+    if (res.status === 200) {
+        return await res.json();
+    }
 }
 
-function MovieCard( {movie: {title, poster, plot}}){
+function MovieCard( {movie: {title, poster, plot, year, genres}}){
     return <><h3>{title}</h3>
         {poster && <img src={poster} alt={"Movie Poster"} width={100}/>}
         <div>{plot}</div>
+        <div>{year}</div>
+        <div>{genres}</div>
         </>;
 }
 
@@ -84,9 +91,50 @@ function ListMovies() {
 }
 
 function AddNewMovie() {
-    return <form>
+
+    const [title, setTitle] = useState("");
+    const [year, setYear] = useState("");
+    const [plot, setPlot] = useState("");
+    const [genres, setGenres] = useState("");
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        await fetchJSON("/api/movies", {
+            method: "post",
+            json: { title, year: parseInt(year), plot, genres },
+        });
+
+        setTitle("");
+        setYear("");
+        setPlot("");
+        setGenres("");
+    }
+
+    return (
+        <form onSubmit={handleSubmit}>
         <h1>Add new movie</h1>
-    </form>;
+            <div>
+                Title:
+                <input value={title} onChange={(e) => setTitle(e.target.value)} />
+            </div>
+            <div>
+                Year:
+                <input value={year} onChange={(e) => setYear(e.target.value)} />
+            </div>
+            <div>
+                Plot:
+                <input value={plot} onChange={(e) => setPlot(e.target.value)} />
+            </div>
+            <div>
+                Genre:
+                <input value={genres} onChange={(e) => setGenres(e.target.value)} />
+            </div>
+        <div>
+            <button disabled={title.length === 0 || year.length === 0}>Save</button>
+        </div>
+    </form>
+    );
 }
 
 function Application() {

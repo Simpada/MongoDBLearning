@@ -3,16 +3,19 @@ import * as path from "path";
 import {MoviesApi} from "./moviesApi.js";
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
+import bodyParser from "body-parser";
 
 dotenv.config();
 
 const app = express();
+app.use(bodyParser.json());
 
 const mongoClient = new MongoClient(process.env.MONGODB_URL);
+
 mongoClient.connect().then(async() => {
     app.use(
         "/api/movies",
-        MoviesApi(mongoClient.db(process.env.MONGODB_DATABASE || "api_and_webdesign"))
+        MoviesApi(mongoClient.db(/*process.env.MONGODB_DATABASE || */"api_and_webdesign"))
     );
 });
 

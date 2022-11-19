@@ -1,38 +1,23 @@
 import {Router} from "express";
 
-const movies = [
-    {
-        title: "Movie 1",
-    },
-    {
-        title: "Movie 2",
-    },
-    {
-        title: "Movie 3",
-    },
-];
-
 export function MoviesApi(mongoDatabase) {
     const router = new Router();
 
     router.get("/", async(req, res, next) => {
         const movies = await mongoDatabase.collection("movies")
             .find({
-                countries: {
-                    $in: ["Ukraine"],
-                },
                 year: {
                     $gte: 2000,
                 }
             })
             .sort({
-                metacritic: -1
+                year: -1
             })
-            .map(({title, year, plot, genre, poster}) => ({
+            .map(({title, year, plot, genres, poster}) => ({
                 title,
                 year,
                 plot,
-                genre,
+                genres,
                 poster
             }))
             .limit(100)
@@ -40,13 +25,16 @@ export function MoviesApi(mongoDatabase) {
         res.json(movies);
     });
 
-    router.post("/new", (req, res, next) => {
-        const { title } = req.body;
-        const result = mongoDatabase.collection("movies").insertOne({
+    router.post("/",(req, res) => {
+        const { title, year, plot, genres } = req.body;
+        const result =  mongoDatabase.collection("movies").insertOne({
             title,
+            year,
+            plot,
+            genres
         });
-
-        res.sendStatus(500);
+        console.log({ result });
+        res.sendStatus(204);
     });
 
     return router;
