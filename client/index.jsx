@@ -1,6 +1,10 @@
-import React, {useEffect, useState} from "react";
-import ReactDOM from "react-dom";
+import * as React from "react";
+import { createRoot } from "react-dom/client";
 import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
+import {useEffect, useState} from "react";
+
+const element = document.getElementById("app");
+const root = createRoot(element);
 
 function FrontPage() {
     return <div>
@@ -37,13 +41,27 @@ function useLoading(loadingFunction) {
     };
 }
 
-async function fetchJSON(url) {
-    const res = await fetch(url);
+async function fetchJSON(url, options = {}) {
+    const res = await fetch(url, {
+        method: options.method || "get",
+        headers: options.json ? { "content-type": "application/json" } : {},
+        body: options.json && JSON.stringify(options.json),
+    });
     if (!res.ok) {
-        throw new Error(`Failed to load ${res.status}: ${res.statusText}`);
+        throw new Error(`Failed ${res.status}: ${(await res).statusText}`);
     }
+    if (res.status === 200) {
+        return await res.json();
+    }
+}
 
-    return await res.json();
+function MovieCard( {movie: {title, poster, plot, year, genres}}){
+    return <><h3>{title}</h3>
+        {poster && <img src={poster} alt={"Movie Poster"} width={100}/>}
+        <div>{plot}</div>
+        <div>{year}</div>
+        <div>{genres}</div>
+        </>;
 }
 
 function ListMovies() {
@@ -65,17 +83,58 @@ function ListMovies() {
     return <div>
         <h1>Movies in the database</h1>
 
-        <ul>
-            {data.map((movie) => (<li key={movie.title}>{movie.title}</li>))}
-        </ul>
+        {data.map((movie) => (
+            <MovieCard key={movie.title} movie={movie}/>
+        ))}
 
     </div>;
 }
 
 function AddNewMovie() {
-    return <form>
+
+    const [title, setTitle] = useState("");
+    const [year, setYear] = useState("");
+    const [plot, setPlot] = useState("");
+    const [genres, setGenres] = useState("");
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        await fetchJSON("/api/movies", {
+            method: "post",
+            json: { title, year: parseInt(year), plot, genres },
+        });
+
+        setTitle("");
+        setYear("");
+        setPlot("");
+        setGenres("");
+    }
+
+    return (
+        <form onSubmit={handleSubmit}>
         <h1>Add new movie</h1>
-    </form>;
+            <div>
+                Title:
+                <input value={title} onChange={(e) => setTitle(e.target.value)} />
+            </div>
+            <div>
+                Year:
+                <input value={year} onChange={(e) => setYear(e.target.value)} />
+            </div>
+            <div>
+                Plot:
+                <input value={plot} onChange={(e) => setPlot(e.target.value)} />
+            </div>
+            <div>
+                Genre:
+                <input value={genres} onChange={(e) => setGenres(e.target.value)} />
+            </div>
+        <div>
+            <button disabled={title.length === 0 || year.length === 0}>Save</button>
+        </div>
+    </form>
+    );
 }
 
 function Application() {
@@ -88,4 +147,6 @@ function Application() {
     </BrowserRouter>
 }
 
-ReactDOM.render(<Application />, document.getElementById("app"));
+//ReactDOM.render(<Application />, document.getElementById("app"));
+
+root.render(<Application />);
