@@ -1,6 +1,10 @@
-import React, {useEffect, useState} from "react";
-import ReactDOM from "react-dom";
+import * as React from "react";
+import { createRoot } from "react-dom/client";
 import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
+import {useEffect, useState} from "react";
+
+const element = document.getElementById("app");
+const root = createRoot(element);
 
 function FrontPage() {
     return <div>
@@ -46,6 +50,13 @@ async function fetchJSON(url) {
     return await res.json();
 }
 
+function MovieCard( {movie: {title, poster, plot}}){
+    return <><h3>{title}</h3>
+        {poster && <img src={poster} alt={"Movie Poster"} width={100}/>}
+        <div>{plot}</div>
+        </>;
+}
+
 function ListMovies() {
 
     const { loading, error, data } = useLoading(
@@ -65,9 +76,9 @@ function ListMovies() {
     return <div>
         <h1>Movies in the database</h1>
 
-        <ul>
-            {data.map((movie) => (<li key={movie.title}>{movie.title}</li>))}
-        </ul>
+        {data.map((movie) => (
+            <MovieCard key={movie.title} movie={movie}/>
+        ))}
 
     </div>;
 }
@@ -88,4 +99,6 @@ function Application() {
     </BrowserRouter>
 }
 
-ReactDOM.render(<Application />, document.getElementById("app"));
+//ReactDOM.render(<Application />, document.getElementById("app"));
+
+root.render(<Application />);

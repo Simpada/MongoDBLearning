@@ -10,9 +10,11 @@ const app = express();
 
 const mongoClient = new MongoClient(process.env.MONGODB_URL);
 mongoClient.connect().then(async() => {
-    const database = await mongoClient.db().admin().listDatabases();
-    app.use("/api/movies", MoviesApi(mongoClient.db("api_and_webdesign")));
-})
+    app.use(
+        "/api/movies",
+        MoviesApi(mongoClient.db(process.env.MONGODB_DATABASE || "api_and_webdesign"))
+    );
+});
 
 
 app.use(express.static("../client/dist/"));
