@@ -1,11 +1,19 @@
 import express from "express";
 import * as path from "path";
 import {MoviesApi} from "./moviesApi.js";
+import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
+const mongoClient = new MongoClient(process.env.MONGODB_URL);
+mongoClient.connect().then(async() => {
+    const database = await mongoClient.db().admin().listDatabases();
+    app.use("/api/movies", MoviesApi(mongoClient.db("api_and_webdesign")));
+})
 
-app.use("/api/movies", MoviesApi());
 
 app.use(express.static("../client/dist/"));
 

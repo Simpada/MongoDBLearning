@@ -12,10 +12,11 @@ const movies = [
     },
 ];
 
-export function MoviesApi() {
+export function MoviesApi(mongoDatabase) {
     const router = new Router();
 
-    router.get("/", (req, res, next) => {
+    router.get("/", async(req, res, next) => {
+        const movies = await mongoDatabase.collection("exam_test").find().toArray()
         res.json(movies);
     });
 
