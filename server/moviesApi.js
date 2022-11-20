@@ -6,6 +6,9 @@ export function MoviesApi(mongoDatabase) {
     router.get("/", async (req, res) => {
         const movies = await mongoDatabase.collection("movies")
             .find({
+                countries: {
+                    $in: ["Ukraine"],
+                },
                 year: {
                     $gte: 2000,
                 }
@@ -26,15 +29,16 @@ export function MoviesApi(mongoDatabase) {
     });
 
     router.post("/", (req, res) => {
-        const {title, year, plot, genres} = req.body;
+        const {title, country, year, plot, genres} = req.body;
         const result = mongoDatabase.collection("movies").insertOne({
             title,
+            countries: [country],
             year,
             plot,
             genres
         });
         console.log({result});
-        res.sendStatus(204);
+        res.sendStatus(200);
     });
 
     return router;
