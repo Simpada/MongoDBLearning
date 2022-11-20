@@ -21,6 +21,9 @@ describe("ListMovies component", () => {
             root.render(<ListMovies listMovies={() => movies}/>);
         });
 
+        expect(Array.from(domElement.querySelectorAll("h3"))
+            .map(e => e.innerHTML))
+            .toEqual(["movie 1", "movie 2"]);
         expect(domElement.innerHTML).toMatchSnapshot();
     });
 })
