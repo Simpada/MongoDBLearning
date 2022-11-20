@@ -26,4 +26,20 @@ describe("ListMovies component", () => {
             .toEqual(["movie 1", "movie 2"]);
         expect(domElement.innerHTML).toMatchSnapshot();
     });
+    it("shows error message", async () => {
+
+        const domElement = document.createElement("div");
+        await act(async () => {
+            const root = createRoot(domElement);
+            root.render(<ListMovies listMovies={() => {
+                throw new Error("Something went wrong!")
+            }}/>);
+        });
+
+        expect(domElement.querySelector("#error-text").innerHTML)
+            .toEqual("Error: Something went wrong!");
+        expect(domElement.innerHTML).toMatchSnapshot();
+    });
+
+
 })
