@@ -1,6 +1,7 @@
 import {createRoot} from "react-dom/client";
 import * as React from "react";
 import {ListMovies} from "../pages/listMovies";
+import {act} from "react-dom/test-utils";
 
 describe("ListMovies component", () => {
     it("shows loading screen", () => {
@@ -11,13 +12,14 @@ describe("ListMovies component", () => {
 
         expect(domElement.innerHTML).toMatchSnapshot();
     });
-    it("shows movie", () => {
+    it("shows movie", async () => {
 
         const movies = [{title: "movie 1"}, {title: "movie 2"}];
-
         const domElement = document.createElement("div");
-        const root = createRoot(domElement);
-        root.render(<ListMovies/>);
+        await act(async () => {
+            const root = createRoot(domElement);
+            root.render(<ListMovies listMovies={() => movies}/>);
+        });
 
         expect(domElement.innerHTML).toMatchSnapshot();
     });
