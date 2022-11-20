@@ -2,7 +2,7 @@ import * as React from "react";
 import {useLoading} from "../useLoading";
 
 
-function MovieCard( {movie: {title, poster, plot, year, genres}}){
+function MovieCard({movie: {title, poster, plot, year, genres}}) {
     return <><h3>{title}</h3>
         {poster && <img src={poster} alt={"Movie Poster"} width={100}/>}
         <div>{plot}</div>
@@ -13,7 +13,7 @@ function MovieCard( {movie: {title, poster, plot, year, genres}}){
 
 export function ListMovies({listMovies}) {
 
-    const { loading, error, data } = useLoading(listMovies
+    const {loading, error, data} = useLoading(listMovies
     );
 
     if (loading) {

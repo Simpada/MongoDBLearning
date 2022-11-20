@@ -9,7 +9,7 @@ const root = createRoot(element);
 export async function fetchJSON(url, options = {}) {
     const res = await fetch(url, {
         method: options.method || "get",
-        headers: options.json ? { "content-type": "application/json" } : {},
+        headers: options.json ? {"content-type": "application/json"} : {},
         body: options.json && JSON.stringify(options.json),
     });
     if (!res.ok) {
@@ -20,4 +20,4 @@ export async function fetchJSON(url, options = {}) {
     }
 }
 
-root.render(<Application />);
+root.render(<Application/>);

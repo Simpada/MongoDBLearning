@@ -3,7 +3,7 @@ import {Router} from "express";
 export function MoviesApi(mongoDatabase) {
     const router = new Router();
 
-    router.get("/", async(req, res, next) => {
+    router.get("/", async (req, res) => {
         const movies = await mongoDatabase.collection("movies")
             .find({
                 year: {
@@ -25,15 +25,15 @@ export function MoviesApi(mongoDatabase) {
         res.json(movies);
     });
 
-    router.post("/",(req, res) => {
-        const { title, year, plot, genres } = req.body;
-        const result =  mongoDatabase.collection("movies").insertOne({
+    router.post("/", (req, res) => {
+        const {title, year, plot, genres} = req.body;
+        const result = mongoDatabase.collection("movies").insertOne({
             title,
             year,
             plot,
             genres
         });
-        console.log({ result });
+        console.log({result});
         res.sendStatus(204);
     });
 
