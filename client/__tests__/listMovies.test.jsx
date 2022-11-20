@@ -1,14 +1,17 @@
 import {createRoot} from "react-dom/client";
 import * as React from "react";
 import {ListMovies} from "../pages/listMovies";
-import {act} from "react-dom/test-utils";
+import {act} from "@testing-library/react";
 
 describe("ListMovies component", () => {
-    it("shows loading screen", () => {
+    it("shows loading screen", async () => {
 
         const domElement = document.createElement("div");
-        const root = createRoot(domElement);
-        root.render(<ListMovies/>);
+
+        await act(async () => {
+            const root = createRoot(domElement);
+            root.render(<ListMovies/>);
+        });
 
         expect(domElement.innerHTML).toMatchSnapshot();
     });
