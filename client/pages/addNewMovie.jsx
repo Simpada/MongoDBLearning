@@ -13,6 +13,7 @@ function FormInput({ label, value, onChangeValue }) {
     );
 }
 
+
 async function postJSON(url, options = {}) {
     const res = await fetch(url, {
         method: options.method || "get",
@@ -27,16 +28,17 @@ async function postJSON(url, options = {}) {
     }
 }
 
-export function AddNewMovie() {
+export function AddNewMovie({createMovie}) {
 
     const [title, setTitle] = useState("");
     const [year, setYear] = useState("");
     const [plot, setPlot] = useState("");
+    const [country, setCountry] = useState("");
     const [genres, setGenres] = useState("");
 
     async function handleSubmit(e) {
         e.preventDefault();
-        //createMovie({title, year: parseInt(year), plot, genres});
+        createMovie({title});
 
         await postJSON("/api/movies", {
             method: "post",
@@ -53,6 +55,7 @@ export function AddNewMovie() {
     return (
         <form onSubmit={handleSubmit}>
             <h1>Add new movie</h1>
+
             <FormInput label={"Title:"} value={title} onChangeValue={setTitle} />
             <FormInput label={"Year:"} value={year} onChangeValue={setYear} />
             <FormInput label={"Plot:"} value={plot} onChangeValue={setPlot} />
