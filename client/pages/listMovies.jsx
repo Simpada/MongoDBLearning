@@ -1,5 +1,4 @@
 import * as React from "react";
-import {fetchJSON} from "../index";
 import {useLoading} from "../useLoading";
 
 
@@ -12,10 +11,9 @@ function MovieCard( {movie: {title, poster, plot, year, genres}}){
     </>;
 }
 
-export function ListMovies() {
+export function ListMovies({listMovies}) {
 
-    const { loading, error, data } = useLoading(
-        async () => fetchJSON("/api/movies")
+    const { loading, error, data } = useLoading(listMovies
     );
 
     if (loading) {
