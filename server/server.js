@@ -15,7 +15,7 @@ const mongoClient = new MongoClient(process.env.MONGODB_URL);
 mongoClient.connect().then(async() => {
     app.use(
         "/api/movies",
-        MoviesApi(mongoClient.db(/*process.env.MONGODB_DATABASE || */"api_and_webdesign"))
+        MoviesApi(mongoClient.db(process.env.MONGODB_DATABASE || "api_and_webdesign"))
     );
 });
 
