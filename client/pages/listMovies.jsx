@@ -1,7 +1,6 @@
 import * as React from "react";
 import {useLoading} from "../useLoading";
 
-
 function MovieCard({movie: {title, poster, plot, year, genres}}) {
     return <><h3>{title}</h3>
         {poster && <img src={poster} alt={"Movie Poster"} width={100}/>}

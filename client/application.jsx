@@ -11,6 +11,7 @@ export function Application() {
         return await fetchJSON("/api/movies")
     }
 
+
     return <BrowserRouter>
         <Routes>
             <Route path={"/"} element={<FrontPage/>}/>

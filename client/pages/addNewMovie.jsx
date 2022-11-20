@@ -1,7 +1,31 @@
 import {useState} from "react";
 import * as React from "react";
-import {fetchJSON} from "../index";
 
+
+function FormInput({ label, value, onChangeValue }) {
+    return (
+        <div>
+            <label>
+                <strong>{label}</strong>{" "}
+                <input value={value} onChange={(e) => onChangeValue(e.target.value)} />
+            </label>
+        </div>
+    );
+}
+
+async function postJSON(url, options = {}) {
+    const res = await fetch(url, {
+        method: options.method || "get",
+        headers: options.json ? {"content-type": "application/json"} : {},
+        body: options.json && JSON.stringify(options.json),
+    });
+    if (!res.ok) {
+        throw new Error(`Failed ${res.status}: ${(await res).statusText}`);
+    }
+    if (res.status === 200) {
+        return await res.json();
+    }
+}
 
 export function AddNewMovie() {
 
@@ -12,11 +36,13 @@ export function AddNewMovie() {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        //createMovie({title, year: parseInt(year), plot, genres});
 
-        await fetchJSON("/api/movies", {
+        await postJSON("/api/movies", {
             method: "post",
-            json: { title, year: parseInt(year), plot, genres },
+            json: {title, year: parseInt(year), plot, genres},
         });
+
 
         setTitle("");
         setYear("");
@@ -27,22 +53,10 @@ export function AddNewMovie() {
     return (
         <form onSubmit={handleSubmit}>
             <h1>Add new movie</h1>
-            <div>
-                Title:
-                <input value={title} onChange={(e) => setTitle(e.target.value)} />
-            </div>
-            <div>
-                Year:
-                <input value={year} onChange={(e) => setYear(e.target.value)} />
-            </div>
-            <div>
-                Plot:
-                <input value={plot} onChange={(e) => setPlot(e.target.value)} />
-            </div>
-            <div>
-                Genre:
-                <input value={genres} onChange={(e) => setGenres(e.target.value)} />
-            </div>
+            <FormInput label={"Title:"} value={title} onChangeValue={setTitle} />
+            <FormInput label={"Year:"} value={year} onChangeValue={setYear} />
+            <FormInput label={"Plot:"} value={plot} onChangeValue={setPlot} />
+            <FormInput label={"Genre:"} value={genres} onChangeValue={setGenres} />
             <div>
                 <button disabled={title.length === 0 || year.length === 0}>Save</button>
             </div>
